@@ -1,52 +1,62 @@
-import { NFTCard } from "@/components/nft-card"
+"use client";
 
-const nfts = [
-  {
-    imageUrl: "/placeholder.svg?height=400&width=400",
-    title: "Hamlet Contemplates ...",
-    creator: "SalvadorDali",
-    likes: 100,
-    currentBid: "4.69 ETH",
-    chainType: "BSC",
-  },
-  {
-    imageUrl: "/placeholder.svg?height=400&width=400",
-    title: "Mona Lisa Reimagined",
-    creator: "LeonardoAI",
-    likes: 85,
-    currentBid: "3.14 ETH",
-    chainType: "ETH",
-  },
-  {
-    imageUrl: "/placeholder.svg?height=400&width=400",
-    title: "Starry Night Pixel Art",
-    creator: "VanGoghBot",
-    likes: 120,
-    currentBid: "5.67 ETH",
-    chainType: "BSC",
-  },
-  {
-    imageUrl: "/placeholder.svg?height=400&width=400",
-    title: "Abstract Emotions #42",
-    creator: "ModernArtist99",
-    likes: 75,
-    currentBid: "2.50 ETH",
-    chainType: "ETH",
-  },
-]
+import { NFTCard } from "@/components/nft-card";
+import { NFTFilter } from "@/components/nft-filter";
+import { useNFTStore } from "@/store/nftStore";
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  return (
-    <div className="min-h-screen bg-black p-4 sm:p-8">
-      <div className="container mx-auto">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6 sm:mb-10">Featured NFTs</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-          {nfts.map((nft, index) => (
-            <NFTCard key={index} {...nft} />
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
+  const filteredNfts = useNFTStore((state) => state.filteredNfts);
+  const [isFilterExpanded, setIsFilterExpanded] = useState(false);
 
+  return (
+    <div className="min-h-screen bg-black flex flex-col">
+      <main className="flex-grow p-4 sm:p-8">
+        <div className="container mx-auto">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-6 sm:mb-10">
+            NFTs
+          </h1>
+
+          <div className="md:hidden mb-4">
+            <Button
+              variant="outline"
+              onClick={() => setIsFilterExpanded(!isFilterExpanded)}
+              className="w-full"
+            >
+              {isFilterExpanded ? "Hide Filters" : "Show Filters"}
+              {isFilterExpanded ? (
+                <ChevronUp className="ml-2" />
+              ) : (
+                <ChevronDown className="ml-2" />
+              )}
+            </Button>
+          </div>
+
+          <div className="flex flex-col md:flex-row gap-8">
+            <div
+              className={`w-full md:w-1/4 ${
+                isFilterExpanded ? "block" : "hidden md:block"
+              }`}
+            >
+              <NFTFilter />
+            </div>
+            <div className="w-full md:w-3/4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {filteredNfts.map((nft, index) => (
+                  <NFTCard key={index} {...nft} />
+                ))}
+              </div>
+              {filteredNfts.length === 0 && (
+                <p className="text-center text-gray-400 mt-8">
+                  No NFTs found matching your filters.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}

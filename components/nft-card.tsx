@@ -1,8 +1,11 @@
+"use client";
+
+import type React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { FavoriteButton } from "@/components/favorite-button";
 
 interface NFTCardProps {
   id: string;
@@ -11,7 +14,8 @@ interface NFTCardProps {
   creator: string;
   likes: number;
   price: string;
-  chainType?: "BSC" | "ETH"; // Add more chain types as needed
+  chainType?: "BSC" | "ETH";
+  status: "available" | "sold";
 }
 
 export function NFTCard({
@@ -22,7 +26,15 @@ export function NFTCard({
   likes,
   price,
   chainType = "BSC",
+  status,
 }: NFTCardProps) {
+  const handleBuyNowClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Implement buy functionality here
+    console.log("Buy Now clicked for NFT:", id);
+  };
+
   return (
     <Link href={`/nft/${id}`} className="block">
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-gray-800/50 to-gray-900 p-[1px] transition-transform duration-300 hover:scale-105">
@@ -35,18 +47,26 @@ export function NFTCard({
               fill
               className="object-cover"
             />
-            {/* Likes Counter */}
-            <div className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 backdrop-blur-sm">
-              <Heart className="h-4 w-4 text-white" />
-              <span className="text-xs font-medium text-white">{likes}</span>
+            <FavoriteButton nftId={id} likes={likes} />
+            {/* Status Badge */}
+            <div
+              className={`absolute left-3 top-3 rounded-full px-2 py-1 text-xs font-medium ${
+                status === "available"
+                  ? "bg-green-500 text-white"
+                  : "bg-red-500 text-white"
+              }`}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
             </div>
             {/* Buy Now Button */}
             <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity hover:opacity-100">
               <Button
                 variant="secondary"
-                className="bg-white/90 text-black hover:bg-white"
+                className="bg-white/90 text-black hover:bg-white z-10"
+                disabled={status === "sold"}
+                onClick={handleBuyNowClick}
               >
-                Buy Now
+                {status === "available" ? "Buy Now" : "Sold"}
               </Button>
             </div>
           </div>

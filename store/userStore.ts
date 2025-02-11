@@ -15,69 +15,129 @@ interface TokenBalances {
 }
 
 interface UserState {
-  walletAddress: string | null;
+  walletAddress: string;
   tokenBalances: TokenBalances;
   favorites: string[];
   transactionHistory: Transaction[];
 }
 
-interface UserActions {
-  setWalletAddress: (address: string | null) => void;
-  updateTokenBalances: (balances: TokenBalances) => void;
-  addFavorite: (nftId: string) => void;
-  removeFavorite: (nftId: string) => void;
-  addTransaction: (transaction: Transaction) => void;
-  resetStore: () => void;
+interface MultiUserState {
+  activeAccount: string | null;
+  accounts: {
+    [walletAddress: string]: UserState;
+  };
 }
 
-type UserStore = UserState & UserActions;
+interface UserActions {
+  setActiveAccount: (address: string | null) => void;
+  updateTokenBalances: (address: string, balances: TokenBalances) => void;
+  addFavorite: (address: string, nftId: string) => void;
+  removeFavorite: (address: string, nftId: string) => void;
+  addTransaction: (address: string, transaction: Transaction) => void;
+  resetAccount: (address: string) => void;
+  removeAccount: (address: string) => void;
+}
+
+type MultiUserStore = MultiUserState & UserActions;
 
 // Create the store
-export const useUserStore = create<UserStore>()(
+export const useMultiUserStore = create<MultiUserStore>()(
   persist(
     (set, get) => ({
       // Initial state
-      walletAddress: null,
-      tokenBalances: {},
-      favorites: [],
-      transactionHistory: [],
+      activeAccount: null,
+      accounts: {},
 
       // Actions
-      setWalletAddress: (address) => set({ walletAddress: address }),
+      setActiveAccount: (address) => set({ activeAccount: address }),
 
-      updateTokenBalances: (balances) =>
+      updateTokenBalances: (address, balances) =>
         set((state) => ({
-          tokenBalances: { ...state.tokenBalances, ...balances },
+          accounts: {
+            ...state.accounts,
+            [address]: {
+              ...state.accounts[address],
+              tokenBalances: {
+                ...state.accounts[address]?.tokenBalances,
+                ...balances,
+              },
+            },
+          },
         })),
 
-      addFavorite: (nftId) =>
+      addFavorite: (address, nftId) =>
         set((state) => ({
-          favorites: state.favorites.includes(nftId)
-            ? state.favorites
-            : [...state.favorites, nftId],
+          accounts: {
+            ...state.accounts,
+            [address]: {
+              ...state.accounts[address],
+              favorites: state.accounts[address]?.favorites.includes(nftId)
+                ? state.accounts[address].favorites
+                : [...(state.accounts[address]?.favorites || []), nftId],
+            },
+          },
         })),
 
-      removeFavorite: (nftId) =>
+      removeFavorite: (address, nftId) =>
         set((state) => ({
-          favorites: state.favorites.filter((id) => id !== nftId),
+          accounts: {
+            ...state.accounts,
+            [address]: {
+              ...state.accounts[address],
+              favorites:
+                state.accounts[address]?.favorites.filter(
+                  (id) => id !== nftId
+                ) || [],
+            },
+          },
         })),
 
-      addTransaction: (transaction) =>
+      addTransaction: (address, transaction) =>
         set((state) => ({
-          transactionHistory: [transaction, ...state.transactionHistory],
+          accounts: {
+            ...state.accounts,
+            [address]: {
+              ...state.accounts[address],
+              transactionHistory: [
+                transaction,
+                ...(state.accounts[address]?.transactionHistory || []),
+              ],
+            },
+          },
         })),
 
-      resetStore: () =>
-        set({
-          walletAddress: null,
-          tokenBalances: {},
-          favorites: [],
-          transactionHistory: [],
+      resetAccount: (address) =>
+        set((state) => ({
+          accounts: {
+            ...state.accounts,
+            [address]: {
+              walletAddress: address,
+              tokenBalances: {},
+              favorites: [],
+              transactionHistory: [],
+            },
+          },
+        })),
+
+      removeAccount: (address) =>
+        set((state) => {
+          const { [address]: _, ...remainingAccounts } = state.accounts;
+          return {
+            accounts: remainingAccounts,
+            activeAccount:
+              state.activeAccount === address ? null : state.activeAccount,
+          };
         }),
     }),
     {
-      name: "user-store", // name of the item in the storage (must be unique)
+      name: "multi-user-store", // name of the item in the storage (must be unique)
       storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
     }
   )
 );
+
+// Helper hook to get the active account's state
+export const useActiveUserState = () => {
+  const { activeAccount, accounts } = useMultiUserStore();
+  return activeAccount ? accounts[activeAccount] : null;
+};

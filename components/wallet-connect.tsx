@@ -65,11 +65,6 @@ export function WalletConnect({
                 <span className="text-sm truncate max-w-[150px]">
                   {displayAddress}
                 </span>
-                {balance && (
-                  <span className="text-xs text-gray-500 truncate max-w-[150px]">
-                    {Number(balance.formatted).toFixed(4)} {balance.symbol}
-                  </span>
-                )}
               </div>
             ) : (
               "Connect Wallet"

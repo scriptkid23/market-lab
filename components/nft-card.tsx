@@ -47,7 +47,7 @@ export function NFTCard({
               fill
               className="object-cover"
             />
-            <FavoriteButton nftId={id} likes={likes} />
+            <FavoriteButton nftId={id} />
             {/* Status Badge */}
             <div
               className={`absolute left-3 top-3 rounded-full px-2 py-1 text-xs font-medium ${

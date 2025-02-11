@@ -9,7 +9,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  const { filteredNfts, initializeFromMockData } = useNFTStore();
+  const { filteredNfts, initializeNFTData } = useNFTStore();
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -17,13 +17,13 @@ export default function Home() {
     const checkAndInitializeStore = () => {
       const storedData = localStorage.getItem("nft-store");
       if (!storedData) {
-        initializeFromMockData();
+        initializeNFTData();
       }
       setIsLoading(false);
     };
 
     checkAndInitializeStore();
-  }, [initializeFromMockData]);
+  }, [initializeNFTData]);
 
   if (isLoading) {
     return <div>Loading...</div>;

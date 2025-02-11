@@ -1,15 +1,17 @@
 import type React from "react";
 import { Heart } from "lucide-react";
 import { useMultiUserStore, useActiveUserState } from "@/store/userStore";
+import { useNFTStore } from "@/store/nftStore";
 
 interface FavoriteButtonProps {
   nftId: string;
-  likes: number;
 }
 
-export function FavoriteButton({ nftId, likes }: FavoriteButtonProps) {
+export function FavoriteButton({ nftId }: FavoriteButtonProps) {
   const { activeAccount, addFavorite, removeFavorite } = useMultiUserStore();
+  const { updateNFTLikes } = useNFTStore();
   const activeUserState = useActiveUserState();
+  const nft = useNFTStore((state) => state.nfts.find((n) => n.id === nftId));
   const isFavorite = activeUserState?.favorites.includes(nftId) || false;
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
@@ -21,10 +23,14 @@ export function FavoriteButton({ nftId, likes }: FavoriteButtonProps) {
     }
     if (isFavorite) {
       removeFavorite(activeAccount, nftId);
+      updateNFTLikes(nftId, false);
     } else {
       addFavorite(activeAccount, nftId);
+      updateNFTLikes(nftId, true);
     }
   };
+
+  if (!nft) return null;
 
   return (
     <button
@@ -36,7 +42,7 @@ export function FavoriteButton({ nftId, likes }: FavoriteButtonProps) {
           isFavorite ? "text-red-500 fill-red-500" : "text-white"
         }`}
       />
-      <span className="text-xs font-medium text-white">{likes}</span>
+      <span className="text-xs font-medium text-white">{nft.likes}</span>
     </button>
   );
 }

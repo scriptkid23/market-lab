@@ -35,7 +35,8 @@ interface NFTStore {
   filters: FilterState;
   setFilters: (filters: Partial<FilterState>) => void;
   applyFilters: () => void;
-  initializeFromMockData: () => void;
+  initializeNFTData: () => void;
+  updateNFTLikes: (nftId: string, increment: boolean) => void;
 }
 
 export const useNFTStore = create<NFTStore>()(
@@ -72,14 +73,28 @@ export const useNFTStore = create<NFTStore>()(
         });
         set({ filteredNfts: filtered });
       },
-      initializeFromMockData: () => {
-        set({ nfts: mockNFTData, filteredNfts: mockNFTData });
-        get().applyFilters();
+      initializeNFTData: () => {
+        const state = get();
+        if (state.nfts.length === 0) {
+          set({ nfts: mockNFTData, filteredNfts: mockNFTData });
+        }
+        // If there's already data in the store, do nothing
+        // The data will have been loaded from localStorage by the persist middleware
+      },
+      updateNFTLikes: (nftId, increment) => {
+        set((state) => {
+          const updatedNfts = state.nfts.map((nft) =>
+            nft.id === nftId
+              ? { ...nft, likes: nft.likes + (increment ? 1 : -1) }
+              : nft
+          );
+          return { nfts: updatedNfts, filteredNfts: updatedNfts };
+        });
       },
     }),
     {
-      name: "nft-store", // unique name for the storage
-      storage: createJSONStorage(() => localStorage), // use localStorage
+      name: "nft-store",
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

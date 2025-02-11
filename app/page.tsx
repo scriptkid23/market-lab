@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { NFTCard } from "@/components/nft-card";
 import { NFTFilter } from "@/components/nft-filter";
 import { useNFTStore } from "@/store/nftStore";
@@ -8,8 +9,25 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  const filteredNfts = useNFTStore((state) => state.filteredNfts);
+  const { filteredNfts, initializeFromMockData } = useNFTStore();
   const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAndInitializeStore = () => {
+      const storedData = localStorage.getItem("nft-store");
+      if (!storedData) {
+        initializeFromMockData();
+      }
+      setIsLoading(false);
+    };
+
+    checkAndInitializeStore();
+  }, [initializeFromMockData]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -45,7 +63,7 @@ export default function Home() {
             <div className="w-full md:w-3/4">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {filteredNfts.map((nft, index) => (
-                  <NFTCard key={index} {...nft} />
+                  <NFTCard key={nft.id} {...nft} />
                 ))}
               </div>
               {filteredNfts.length === 0 && (

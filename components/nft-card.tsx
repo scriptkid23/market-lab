@@ -10,7 +10,7 @@ interface NFTCardProps {
   title: string;
   creator: string;
   likes: number;
-  currentBid: string;
+  price: string;
   chainType?: "BSC" | "ETH"; // Add more chain types as needed
 }
 
@@ -20,7 +20,7 @@ export function NFTCard({
   title,
   creator,
   likes,
-  currentBid,
+  price,
   chainType = "BSC",
 }: NFTCardProps) {
   return (
@@ -75,7 +75,7 @@ export function NFTCard({
               <div className="text-right">
                 <div className="text-xs text-gray-400">Price</div>
                 <div className="text-sm font-medium text-white">
-                  {currentBid} ETH
+                  {price} ETH
                 </div>
               </div>
             </div>

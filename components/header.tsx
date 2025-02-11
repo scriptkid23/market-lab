@@ -17,7 +17,23 @@ export function Header() {
     };
     handleResize();
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+
+    // Listen for balance updates
+    const handleBalanceUpdate = (event: CustomEvent<string>) => {
+      setBalance(event.detail);
+    };
+    window.addEventListener(
+      "balanceUpdated",
+      handleBalanceUpdate as EventListener
+    );
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener(
+        "balanceUpdated",
+        handleBalanceUpdate as EventListener
+      );
+    };
   }, []);
 
   const toggleMenu = () => {
@@ -33,8 +49,6 @@ export function Header() {
     { href: "/explore", label: "Explore" },
     { href: "/activity", label: "Activity" },
     { href: "/community", label: "Community" },
-    // { href: "/pages", label: "Pages" },
-    // { href: "/contact", label: "Contact us" },
   ];
 
   return (

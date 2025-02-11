@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { useMultiUserStore } from "@/store/userStore";
 import { mockNFTData } from "@/mock/nft-data";
+import { useMultiUserStore } from "@/store/userStore";
 
 export interface NFT {
   id: string;
@@ -39,6 +39,10 @@ interface NFTStore {
   applyFilters: () => void;
   initializeNFTData: () => void;
   updateNFTLikes: (nftId: string, increment: boolean) => void;
+  updateNFTTransactionHistory: (
+    nftId: string,
+    transaction: NFT["transactionHistory"][0]
+  ) => void;
 }
 
 export const useNFTStore = create<NFTStore>()(
@@ -104,6 +108,20 @@ export const useNFTStore = create<NFTStore>()(
           const updatedNfts = state.nfts.map((nft) =>
             nft.id === nftId
               ? { ...nft, likes: nft.likes + (increment ? 1 : -1) }
+              : nft
+          );
+          return { nfts: updatedNfts };
+        });
+        get().applyFilters();
+      },
+      updateNFTTransactionHistory: (nftId, transaction) => {
+        set((state) => {
+          const updatedNfts = state.nfts.map((nft) =>
+            nft.id === nftId
+              ? {
+                  ...nft,
+                  transactionHistory: [transaction, ...nft.transactionHistory],
+                }
               : nft
           );
           return { nfts: updatedNfts };

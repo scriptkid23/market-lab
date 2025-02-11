@@ -1,4 +1,4 @@
-import { SocialIcon } from "@/components/ui/social-icon"
+import { SocialIcon } from "@/components/ui/social-icon";
 
 export function Footer() {
   return (
@@ -10,10 +10,9 @@ export function Footer() {
           <SocialIcon url="https://discord.com" platform="discord" />
         </div>
         <div className="text-center mt-4 text-sm text-gray-400">
-          &copy; {new Date().getFullYear()} NFT GAME. All rights reserved.
+          &copy; {new Date().getFullYear()} 1hoodlabs. All rights reserved.
         </div>
       </div>
     </footer>
-  )
+  );
 }
-

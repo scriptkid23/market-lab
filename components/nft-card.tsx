@@ -28,13 +28,6 @@ export function NFTCard({
   chainType = "BSC",
   status,
 }: NFTCardProps) {
-  const handleBuyNowClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Implement buy functionality here
-    console.log("Buy Now clicked for NFT:", id);
-  };
-
   return (
     <Link href={`/nft/${id}`} className="block">
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-gray-800/50 to-gray-900 p-[1px] transition-transform duration-300 hover:scale-105">
@@ -64,7 +57,6 @@ export function NFTCard({
                 variant="secondary"
                 className="bg-white/90 text-black hover:bg-white z-10"
                 disabled={status === "sold"}
-                onClick={handleBuyNowClick}
               >
                 {status === "available" ? "Buy Now" : "Sold"}
               </Button>

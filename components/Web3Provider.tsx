@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import React from "react"; // Added import for React
 
-const config = createConfig(
+export const config = createConfig(
   getDefaultConfig({
     // Your dApp's chain (Sepolia testnet)
     chains: [sepolia],

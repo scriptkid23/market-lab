@@ -1,6 +1,7 @@
-import { mockNFTData } from "@/mock/nft-data";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { useMultiUserStore } from "@/store/userStore";
+import { mockNFTData } from "@/mock/nft-data";
 
 export interface NFT {
   id: string;
@@ -27,6 +28,7 @@ interface FilterState {
   priceRange: [number, number];
   status: string[];
   type: string;
+  showFavorites: boolean;
 }
 
 interface NFTStore {
@@ -49,6 +51,7 @@ export const useNFTStore = create<NFTStore>()(
         priceRange: [0, 100],
         status: [],
         type: "",
+        showFavorites: false,
       },
       setFilters: (newFilters) => {
         set((state) => ({
@@ -58,6 +61,11 @@ export const useNFTStore = create<NFTStore>()(
       },
       applyFilters: () => {
         const { nfts, filters } = get();
+        const { activeAccount, accounts } = useMultiUserStore.getState();
+        const userFavorites = activeAccount
+          ? accounts[activeAccount]?.favorites || []
+          : [];
+
         const filtered = nfts.filter((nft) => {
           const matchesSearch =
             nft.title.toLowerCase().includes(filters.search.toLowerCase()) ||
@@ -67,9 +75,20 @@ export const useNFTStore = create<NFTStore>()(
             Number.parseFloat(nft.price) <= filters.priceRange[1];
           const matchesStatus =
             filters.status.length === 0 || filters.status.includes(nft.status);
-          const matchesType = !filters.type || filters.type === nft.type;
+          const matchesType =
+            !filters.type ||
+            filters.type === "all" ||
+            filters.type === nft.type;
+          const matchesFavorites =
+            !filters.showFavorites || userFavorites.includes(nft.id);
 
-          return matchesSearch && matchesPrice && matchesStatus && matchesType;
+          return (
+            matchesSearch &&
+            matchesPrice &&
+            matchesStatus &&
+            matchesType &&
+            matchesFavorites
+          );
         });
         set({ filteredNfts: filtered });
       },
@@ -78,8 +97,7 @@ export const useNFTStore = create<NFTStore>()(
         if (state.nfts.length === 0) {
           set({ nfts: mockNFTData, filteredNfts: mockNFTData });
         }
-        // If there's already data in the store, do nothing
-        // The data will have been loaded from localStorage by the persist middleware
+        get().applyFilters();
       },
       updateNFTLikes: (nftId, increment) => {
         set((state) => {
@@ -88,8 +106,9 @@ export const useNFTStore = create<NFTStore>()(
               ? { ...nft, likes: nft.likes + (increment ? 1 : -1) }
               : nft
           );
-          return { nfts: updatedNfts, filteredNfts: updatedNfts };
+          return { nfts: updatedNfts };
         });
+        get().applyFilters();
       },
     }),
     {

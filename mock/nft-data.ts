@@ -2,45 +2,95 @@ import type { NFT } from "@/store/nftStore";
 
 export const mockNFTData: NFT[] = [
   {
-    id: "1",
-    imageUrl: "/placeholder.svg?height=400&width=400",
-    title: "Hamlet Contemplates ...",
+    id: "nft1",
+    imageUrl:
+      "https://i.seadn.io/s/raw/files/d5a5ea949c4308002f6c28515cb265ea.jpg?w=500&auto=format",
+    title: "2021 Panini Donruss Optic #206 Mac Jones (PSA 9 MINT)",
     description:
-      "A digital masterpiece capturing the essence of Shakespeare's Hamlet in a contemporary setting.",
-    creator: "SalvadorDali",
-    likes: 100,
-    price: "4.69",
-    chainType: "BSC",
+      "A rare mint-condition sports card featuring Mac Jones. Highly coveted by collectors.",
+    creator: "Courtyard.io",
+    likes: 150,
+    price: "0.0029881",
+    chainType: "ETH",
     status: "available",
-    type: "art",
+    type: "Sports Card",
     transactionHistory: [],
   },
   {
-    id: "2",
-    imageUrl: "/placeholder.svg?height=400&width=400",
-    title: "Mona Lisa Reimagined",
+    id: "nft2",
+    imageUrl:
+      "https://i.seadn.io/s/raw/files/6ac69eaebf27934faad071c856ed13c1.jpg?w=500&auto=format",
+    title: "2021 Panini Prizm #331 Trevor Lawrence (PSA 8 NM-MT)",
     description:
-      "A futuristic interpretation of the classic Mona Lisa, blending traditional art with AI-generated elements.",
-    creator: "LeonardoAI",
-    likes: 85,
-    price: "3.14",
+      "Limited edition Panini Prizm card featuring quarterback Trevor Lawrence.",
+    creator: "Courtyard.io",
+    likes: 200,
+    price: "0.002988",
     chainType: "ETH",
     status: "sold",
-    type: "art",
+    type: "Sports Card",
     transactionHistory: [],
   },
   {
-    id: "3",
-    imageUrl: "/placeholder.svg?height=400&width=400",
-    title: "Crypto Punk #3000",
+    id: "nft3",
+    imageUrl:
+      "https://i.seadn.io/s/raw/files/63c6a2eeaf664a963e6269c91df2d27b.jpg?w=500&auto=format",
+    title: "2022 Panini Donruss Optic #217 Kendall Brown (PSA 9 MINT)",
     description:
-      "A rare Crypto Punk NFT, part of the revolutionary collection that sparked the NFT movement.",
-    creator: "LarvaLabs",
-    likes: 250,
-    price: "32.5",
+      "Exclusive 2022 Panini Donruss card featuring Kendall Brown in pristine condition.",
+    creator: "Courtyard.io",
+    likes: 90,
+    price: "0.0029885",
     chainType: "ETH",
     status: "available",
-    type: "collectible",
+    type: "Sports Card",
+    transactionHistory: [],
+  },
+  {
+    id: "nft4",
+    imageUrl:
+      "https://i.seadn.io/s/raw/files/95c1b8f9f486b7d8eb455a2082d963f0.jpg?w=500&auto=format",
+    title: "2022 Panini Donruss Optic #217 Kendall Brown (Alternate)",
+    description:
+      "Another variation of the iconic Kendall Brown card with a unique design twist.",
+    creator: "Courtyard.io",
+    likes: 120,
+    price: "0.0029890",
+    chainType: "ETH",
+    status: "sold",
+    type: "Sports Card",
+    transactionHistory: [],
+  },
+  {
+    id: "nft5",
+    imageUrl:
+      "https://i.seadn.io/s/raw/files/709ac261a5bfa515d7625dfadaa4f617.jpg?w=500&auto=format",
+    title:
+      "2000 Collector's Edge Masters Retail #230 Sylvester Morris (PSA 10 GEM MINT)",
+    description:
+      "Collector's edge sports card featuring Sylvester Morris in a pristine condition.",
+    creator: "Courtyard.io",
+    likes: 300,
+    price: "0.0029888",
+    chainType: "ETH",
+    status: "available",
+    type: "Sports Card",
+    transactionHistory: [],
+  },
+  {
+    id: "nft6",
+    imageUrl:
+      "https://i.seadn.io/s/raw/files/d07a37ac410ba69754a200e80d2206fe.jpg?w=500&auto=format",
+    title:
+      "2022 Panini Donruss Optic #217 Kendall Brown (PSA 9 MINT) - Variant",
+    description:
+      "A variant of the iconic Kendall Brown card with a unique background hue.",
+    creator: "Courtyard.io",
+    likes: 75,
+    price: "0.0029890",
+    chainType: "ETH",
+    status: "available",
+    type: "Sports Card",
     transactionHistory: [],
   },
 ];

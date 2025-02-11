@@ -14,20 +14,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { NFT } from "@/store/nftStore";
 
 export default function NFTDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { nfts } = useNFTStore();
-  const [nft, setNft] = useState<any>(null);
+  const { nfts, initializeNFTData } = useNFTStore();
+  const [nft, setNft] = useState<NFT | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState<string | null>(
     null
   );
 
   useEffect(() => {
+    initializeNFTData();
+  }, [initializeNFTData]);
+
+  useEffect(() => {
     const selectedNFT = nfts.find((n) => n.id === id);
-    setNft(selectedNFT);
+    setNft(selectedNFT || null);
   }, [id, nfts]);
 
   const handleBuy = async () => {
@@ -42,11 +47,15 @@ export default function NFTDetailPage() {
   };
 
   if (!nft) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        <p>NFT not found</p>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen  text-white">
+    <div className="min-h-screen text-white">
       <main className="container mx-auto px-4 py-8">
         <button
           onClick={() => router.back()}
@@ -67,18 +76,17 @@ export default function NFTDetailPage() {
             <h1 className="text-3xl font-bold">{nft.title}</h1>
             <p className="text-gray-400">{nft.description}</p>
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-semibold">
-                {nft.currentBid} ETH
-              </span>
-              <span className="text-purple-500">{nft.chainType}</span>
+              <span className="text-2xl font-semibold">{nft.price} ETH</span>
             </div>
             <Button
               onClick={handleBuy}
-              disabled={isLoading}
+              disabled={isLoading || nft.status === "sold"}
               className="w-full h-12 text-lg"
             >
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : nft.status === "sold" ? (
+                "Sold"
               ) : (
                 "Buy Now"
               )}
@@ -100,28 +108,32 @@ export default function NFTDetailPage() {
         </div>
         <div className="mt-12">
           <h2 className="text-2xl font-semibold mb-4">Transaction History</h2>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Event</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>From</TableHead>
-                <TableHead>To</TableHead>
-                <TableHead>Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {nft.transactionHistory.map((transaction: any, index: number) => (
-                <TableRow key={index}>
-                  <TableCell>{transaction.event}</TableCell>
-                  <TableCell>{transaction.price} ETH</TableCell>
-                  <TableCell>{transaction.from}</TableCell>
-                  <TableCell>{transaction.to}</TableCell>
-                  <TableCell>{transaction.date}</TableCell>
+          {nft.transactionHistory.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Event</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>From</TableHead>
+                  <TableHead>To</TableHead>
+                  <TableHead>Date</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {nft.transactionHistory.map((transaction, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{transaction.event}</TableCell>
+                    <TableCell>{transaction.price}</TableCell>
+                    <TableCell>{transaction.from}</TableCell>
+                    <TableCell>{transaction.to}</TableCell>
+                    <TableCell>{transaction.date}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <p>No transaction history available.</p>
+          )}
         </div>
       </main>
     </div>

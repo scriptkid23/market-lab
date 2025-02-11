@@ -33,8 +33,8 @@ export function Header() {
     { href: "/explore", label: "Explore" },
     { href: "/activity", label: "Activity" },
     { href: "/community", label: "Community" },
-    { href: "/pages", label: "Pages" },
-    { href: "/contact", label: "Contact us" },
+    // { href: "/pages", label: "Pages" },
+    // { href: "/contact", label: "Contact us" },
   ];
 
   return (
@@ -80,8 +80,8 @@ export function Header() {
               ) : (
                 <Menu className="h-6 w-6" />
               )}
-              </Button>
-            </div>
+            </Button>
+          </div>
         </div>
 
         {/* Mobile menu */}

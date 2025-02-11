@@ -13,11 +13,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useNFTStore } from "@/store/nftStore";
+import { useMultiUserStore } from "@/store/userStore";
 
 export function NFTFilter() {
   const [isExpanded, setIsExpanded] = useState(false);
   const { filters, setFilters } = useNFTStore();
+  const { activeAccount } = useMultiUserStore();
 
   const toggleStatus = (value: string) => {
     const updatedStatus = filters.status.includes(value)
@@ -132,6 +135,26 @@ export function NFTFilter() {
             </SelectContent>
           </Select>
         </div>
+
+        {activeAccount && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Favorites
+            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="show-favorites" className="text-sm text-gray-300">
+                Show only favorites
+              </label>
+              <Switch
+                id="show-favorites"
+                checked={filters.showFavorites}
+                onCheckedChange={(checked) =>
+                  setFilters({ showFavorites: checked })
+                }
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

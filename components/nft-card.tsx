@@ -75,7 +75,7 @@ export function NFTCard({
           <div className="mt-3 space-y-3">
             <div className="flex items-center justify-between">
               <div className="text-sm font-medium text-gray-200 truncate mr-2">
-                "{title}"
+                {title}
               </div>
               <span className="rounded-lg bg-indigo-600 px-2 py-1 text-xs font-medium text-white flex-shrink-0">
                 {chainType}
